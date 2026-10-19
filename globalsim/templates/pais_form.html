@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block titulo %}GlobalSIM - {{ 'Editar' if editando else 'Cadastrar' }} país{% endblock %}
+
+{# Serve para cadastro (editando=False) e alteração (editando=True) #}
+{% block conteudo %}
+  <h1>{{ 'Alterar país' if editando else 'Cadastrar país' }}</h1>
+
+  <form method="post">
+    <p>
+      <label>Código (2 letras):
+        <input type="text" name="codigo" maxlength="2" required
+               value="{{ pais.get('codigo', '') }}" {{ 'readonly' if editando }}>
+      </label>
+    </p>
+    <p>
+      <label>País:
+        <input type="text" name="pais" required value="{{ pais.get('pais', '') }}">
+      </label>
+    </p>
+    <p>
+      <label>Região:
+        <input type="text" name="regiao" required value="{{ pais.get('regiao', '') }}">
+      </label>
+    </p>
+    <p>
+      <label>Operadora:
+        <input type="text" name="operadora" required value="{{ pais.get('operadora', '') }}">
+      </label>
+    </p>
+    <p>
+      <label>Tecnologia:
+        <select name="tecnologia" required>
+          {% for t in ['5G', '4G', '3G'] %}
+          <option value="{{ t }}" {{ 'selected' if pais.get('tecnologia') == t }}>{{ t }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </p>
+    <button type="submit">{{ 'Salvar alterações' if editando else 'Cadastrar' }}</button>
+    <a href="{{ url_for('listar_paises') }}">Cancelar</a>
+  </form>
+{% endblock %}

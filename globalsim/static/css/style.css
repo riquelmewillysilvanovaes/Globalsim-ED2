@@ -1,0 +1,5 @@
+/* Estilo básico. O colega responsável pelo front end pode substituir este arquivo. */
+body { font-family: sans-serif; margin: 2rem; }
+.mensagem { padding: 0.5rem 1rem; border-radius: 4px; }
+.mensagem.sucesso { background: #d4edda; }
+.mensagem.erro { background: #f8d7da; }

@@ -1,12 +1,58 @@
 {% extends "base.html" %}
-{% block titulo %}GlobalSIM - Início{% endblock %}
+
+{% block titulo %}GlobalSIM - Painel de Operações{% endblock %}
 
 {% block conteudo %}
-  <h1>GlobalSIM</h1>
-  <p>Serviço internacional de Internet por eSIM.</p>
-  <p>Países atendidos cadastrados: <strong>{{ total }}</strong></p>
-  <ul>
-    <li><a href="{{ url_for('listar_paises') }}">Ver países atendidos</a></li>
-    <li><a href="{{ url_for('cobertura') }}">Consultar cobertura por código</a></li>
-  </ul>
+<div class="py-4 border-bottom mb-4">
+  <h1 class="h3 mb-1">GlobalSIM - Painel de Operações</h1>
+  <p class="text-muted mb-0">Gerenciamento de cobertura internacional e eSIMs</p>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h2 class="h6 card-title">Países Cadastrados</h2>
+        <p class="card-text text-muted small">Listar, alterar e remover países atendidos.</p>
+        <a href="{{ url_for('listar_paises') }}" class="btn btn-primary btn-sm">Ver Países Cadastrados</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h2 class="h6 card-title">Novo País</h2>
+        <p class="card-text text-muted small">Incluir um novo país na base de cobertura.</p>
+        <a href="{{ url_for('cadastrar_pais') }}" class="btn btn-success btn-sm">Cadastrar Novo País</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h2 class="h6 card-title">Cobertura</h2>
+        <p class="card-text text-muted small">Verificar o atendimento a partir do código do país.</p>
+        <a href="{{ url_for('cobertura') }}" class="btn btn-secondary btn-sm">Consultar Cobertura</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 class="h5">Resumo</h2>
+<table class="table table-bordered table-sm w-auto">
+  <tbody>
+    <tr>
+      <th scope="row" class="table-light">Países cadastrados</th>
+      <td>{{ total }}</td>
+    </tr>
+    <tr>
+      <th scope="row" class="table-light">Ações da Etapa 1</th>
+      <td>
+        <a href="{{ url_for('cadastrar_pais') }}">Cadastrar</a> |
+        <a href="{{ url_for('listar_paises') }}">Listar / Alterar / Remover</a> |
+        <a href="{{ url_for('cobertura') }}">Consultar</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
 {% endblock %}

@@ -1,42 +1,68 @@
 {% extends "base.html" %}
-{% block titulo %}GlobalSIM - {{ 'Editar' if editando else 'Cadastrar' }} país{% endblock %}
 
-{# Serve para cadastro (editando=False) e alteração (editando=True) #}
+{% block titulo %}GlobalSIM - {{ 'Alterar' if editando else 'Cadastrar' }} País{% endblock %}
+
 {% block conteudo %}
-  <h1>{{ 'Alterar país' if editando else 'Cadastrar país' }}</h1>
+<div class="row">
+  <div class="col-lg-8">
+    <h1 class="h3 py-3 border-bottom mb-4">{{ 'Alterar País' if editando else 'Cadastrar Novo País' }}</h1>
 
-  <form method="post">
-    <p>
-      <label>Código (2 letras):
-        <input type="text" name="codigo" maxlength="2" required
-               value="{{ pais.get('codigo', '') }}" {{ 'readonly' if editando }}>
-      </label>
-    </p>
-    <p>
-      <label>País:
-        <input type="text" name="pais" required value="{{ pais.get('pais', '') }}">
-      </label>
-    </p>
-    <p>
-      <label>Região:
-        <input type="text" name="regiao" required value="{{ pais.get('regiao', '') }}">
-      </label>
-    </p>
-    <p>
-      <label>Operadora:
-        <input type="text" name="operadora" required value="{{ pais.get('operadora', '') }}">
-      </label>
-    </p>
-    <p>
-      <label>Tecnologia:
-        <select name="tecnologia" required>
+    <form method="post" novalidate>
+      <div class="mb-3">
+        <label for="campo-codigo" class="form-label">Código (2 letras)</label>
+        <input type="text" id="campo-codigo" name="codigo"
+               class="form-control text-uppercase {{ 'bg-light' if editando }}"
+               maxlength="2" required placeholder="Ex: BR"
+               value="{{ pais.get('codigo', '') }}"
+               {{ 'readonly' if editando }}>
+        {% if editando %}
+          <div class="form-text">O código é a chave do registro e não pode ser alterado.</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="campo-pais" class="form-label">País</label>
+        <input type="text" id="campo-pais" name="pais" class="form-control" required
+               value="{{ pais.get('pais', '') }}">
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label for="campo-regiao" class="form-label">Região</label>
+          <input type="text" id="campo-regiao" name="regiao" class="form-control" required
+                 value="{{ pais.get('regiao', '') }}">
+        </div>
+        <div class="col-md-6">
+          <label for="campo-operadora" class="form-label">Operadora</label>
+          <input type="text" id="campo-operadora" name="operadora" class="form-control" required
+                 value="{{ pais.get('operadora', '') }}">
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label for="campo-tecnologia" class="form-label">Tecnologia</label>
+        <select id="campo-tecnologia" name="tecnologia" class="form-select" required>
           {% for t in ['5G', '4G', '3G'] %}
-          <option value="{{ t }}" {{ 'selected' if pais.get('tecnologia') == t }}>{{ t }}</option>
+            <option value="{{ t }}" {{ 'selected' if pais.get('tecnologia') == t }}>{{ t }}</option>
           {% endfor %}
         </select>
-      </label>
-    </p>
-    <button type="submit">{{ 'Salvar alterações' if editando else 'Cadastrar' }}</button>
-    <a href="{{ url_for('listar_paises') }}">Cancelar</a>
-  </form>
+      </div>
+
+      <button type="submit" class="btn btn-primary">{{ 'Salvar alterações' if editando else 'Cadastrar' }}</button>
+      <a href="{{ url_for('listar_paises') }}" class="btn btn-outline-secondary">Cancelar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Código em maiúsculas enquanto digita (o backend também normaliza)
+  const inputCodigo = document.getElementById('campo-codigo');
+  if (inputCodigo && !inputCodigo.readOnly) {
+    inputCodigo.addEventListener('input', function () {
+      this.value = this.value.toUpperCase();
+    });
+  }
+</script>
 {% endblock %}

@@ -1,26 +1,47 @@
 {% extends "base.html" %}
-{% block titulo %}GlobalSIM - Cobertura{% endblock %}
+
+{% block titulo %}GlobalSIM - Consulta de Cobertura{% endblock %}
 
 {% block conteudo %}
-  <h1>Consulta de cobertura</h1>
+<div class="row">
+  <div class="col-lg-8">
+    <h1 class="h3 py-3 border-bottom mb-4">Consulta de Cobertura</h1>
 
-  <form method="get" action="{{ url_for('cobertura') }}">
-    <label>Código do país:
-      <input type="text" name="codigo" maxlength="2" required value="{{ codigo }}">
-    </label>
-    <button type="submit">Verificar cobertura</button>
-  </form>
+    <form method="get" action="{{ url_for('cobertura') }}" class="mb-4">
+      <label for="codigo" class="form-label">Código do país (2 letras)</label>
+      <div class="input-group">
+        <input type="text" id="codigo" name="codigo" class="form-control text-uppercase"
+               maxlength="2" required autocomplete="off" placeholder="Ex: BR"
+               value="{{ codigo }}">
+        <button class="btn btn-primary" type="submit">Verificar cobertura</button>
+      </div>
+    </form>
 
-  {% if consultou %}
-    {% if pais %}
-      <h2>COBERTURA DISPONÍVEL</h2>
-      <p>País: {{ pais.pais }}</p>
-      <p>Região: {{ pais.regiao }}</p>
-      <p>Operadora: {{ pais.operadora }}</p>
-      <p>Tecnologia: {{ pais.tecnologia }}</p>
-    {% else %}
-      <h2>COBERTURA INDISPONÍVEL</h2>
-      <p>O código "{{ codigo|upper }}" não está entre os países atendidos.</p>
+    {% if consultou %}
+      {% if pais %}
+        <div class="alert alert-success" role="alert">
+          <strong>COBERTURA DISPONÍVEL</strong>
+        </div>
+        <table class="table table-bordered">
+          <tbody>
+            <tr><th scope="row" class="table-light w-25">Código</th><td>{{ pais.codigo }}</td></tr>
+            <tr><th scope="row" class="table-light">País</th><td>{{ pais.pais }}</td></tr>
+            <tr><th scope="row" class="table-light">Região</th><td>{{ pais.regiao }}</td></tr>
+            <tr><th scope="row" class="table-light">Operadora</th><td>{{ pais.operadora }}</td></tr>
+            <tr><th scope="row" class="table-light">Tecnologia</th><td>{{ pais.tecnologia }}</td></tr>
+          </tbody>
+        </table>
+        <a href="{{ url_for('editar_pais', codigo=pais.codigo) }}" class="btn btn-outline-primary btn-sm">Editar</a>
+        <a href="{{ url_for('listar_paises') }}" class="btn btn-outline-secondary btn-sm">Ver todos os países</a>
+      {% else %}
+        <div class="alert alert-danger" role="alert">
+          <strong>COBERTURA INDISPONÍVEL</strong><br>
+          O código "{{ codigo|upper }}" não está entre os países atendidos.
+        </div>
+        <a href="{{ url_for('cadastrar_pais') }}" class="btn btn-success btn-sm">Cadastrar país</a>
+        <a href="{{ url_for('listar_paises') }}" class="btn btn-outline-secondary btn-sm">Ver todos os países</a>
+      {% endif %}
     {% endif %}
-  {% endif %}
+  </div>
+</div>
 {% endblock %}

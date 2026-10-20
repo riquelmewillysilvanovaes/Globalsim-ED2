@@ -1,12 +1,9 @@
-import os
-import shutil
+import json
 
 import pytest
 
 from estruturas.tabela_hash import TabelaHash, _eh_primo
 from servicos.paises_service import PaisesService
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def pais(codigo, nome="Teste"):
@@ -152,13 +149,18 @@ def test_listar_itens_e_estatisticas():
 
 @pytest.fixture
 def servico(tmp_path):
-    copia = tmp_path / "paises.json"
-    shutil.copy(os.path.join(BASE_DIR, "arquivos", "paises.json"), copia)
-    return PaisesService(str(copia))
+    # JSON próprio do teste: não depende do arquivos/paises.json, que muda com o uso
+    registros = []
+    for codigo in ["BR", "PT", "ES", "FR", "IT", "US", "CA", "JP"]:
+        registros.append(pais(codigo))
+    registros[4]["pais"] = "Itália"
+    caminho = tmp_path / "paises.json"
+    caminho.write_text(json.dumps(registros), encoding="utf-8")
+    return PaisesService(str(caminho))
 
 
 def test_servico_carrega_paises_na_hash(servico):
-    assert servico.tabela.tamanho() == 9
+    assert servico.tabela.tamanho() == 8
     assert servico.consultar(" it ")["pais"] == "Itália"
     assert servico.consultar("XX") is None
     metricas = servico.metricas()

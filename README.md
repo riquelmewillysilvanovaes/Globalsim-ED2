@@ -28,7 +28,8 @@ Globalsim-ED2/
 ├── .venv/                         # Ambiente virtual Python isolado
 ├── globalsim/
 │   ├── app.py                     # Inicialização da aplicação Flask e rotas HTTP
-│   ├── requirements.txt           # Dependências do projeto (Flask, etc.)
+│   ├── requirements.txt           # Dependências do projeto (Flask, pytest)
+│   ├── pytest.ini                 # Configuração dos testes
 │   ├── INTERFACE_TABELA_HASH.md   # Especificação técnica da Tabela Hash
 │   ├── arquivos/
 │   │   └── paises.json            # Persistência dos registros de países
@@ -41,12 +42,14 @@ Globalsim-ED2/
 │   ├── static/
 │   │   └── css/
 │   │       └── style.css          # Estilos complementares da interface
-│   └── templates/
-│       ├── base.html              # Template mestre com Bootstrap 5 e Navbar
-│       ├── index.html             # Página inicial / Apresentação do serviço
-│       ├── paises.html            # Listagem de países e painel de métricas
-│       ├── pais_form.html         # Formulário unificado (cadastro e edição)
-│       └── cobertura.html         # Consulta de disponibilidade de rede
+│   ├── templates/
+│   │   ├── base.html              # Template mestre com Bootstrap 5 e Navbar
+│   │   ├── index.html             # Página inicial / Apresentação do serviço
+│   │   ├── paises.html            # Listagem de países e painel de métricas
+│   │   ├── pais_form.html         # Formulário unificado (cadastro e edição)
+│   │   └── cobertura.html         # Consulta de disponibilidade de rede
+│   └── tests/
+│       └── test_tabela_hash.py    # Testes automatizados da Tabela Hash
 ├── .gitignore
 └── README.md
 ```
@@ -96,6 +99,25 @@ python app.py
 
 ### 5. Acessar a Aplicação no Navegador
 Abra o navegador e acesse: [http://127.0.0.1:5000](http://127.0.0.1:5000)
+
+### 6. Executar os Testes
+Dentro da pasta `globalsim/`:
+```bash
+pytest -q
+```
+
+---
+
+## 🔑 Etapa 1 — Tabela Hash (`globalsim/estruturas/tabela_hash.py`)
+
+Os países atendidos ficam numa Tabela Hash implementada do zero (sem `dict`), indexada pelo código do país (`BR`, `IT`, ...).
+
+* **Colisões:** encadeamento separado. Cada posição do vetor (bucket) é uma lista de pares `[chave, valor]`; chaves que caem no mesmo índice ficam na mesma cadeia.
+* **Função de hash:** polinomial própria, `h = (h * 31 + ord(c)) % capacidade` para cada caractere. Não usamos `hash()` do Python porque ele muda a cada execução, o que tornaria a instrumentação não reproduzível.
+* **Capacidade e rehash:** começa em 7 (primo pequeno, para colisões e redimensionamento aparecerem com os países cadastrados). Quando o fator de carga passa de 0,75, a capacidade dobra e é arredondada para o próximo primo (7 → 17 → 37 ...), e todas as chaves são reinseridas.
+* **Operações:** `inserir` (rejeita código duplicado), `buscar`, `atualizar`, `remover`, `listar`/`itens`.
+* **Instrumentação** (`metricas()` / `estatisticas()`): capacidade, nº de elementos, fator de carga, colisões atuais e acumuladas, maior bucket, buckets usados, nº de rehashes, comparações da última busca e o mapa dos buckets (índice → chaves).
+* **Persistência:** `arquivos/paises.json` é carregado na tabela ao iniciar e regravado após cada cadastro, alteração ou remoção (`servicos/paises_service.py`).
 
 ---
 

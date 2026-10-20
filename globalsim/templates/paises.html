@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block titulo %}GlobalSIM - Países{% endblock %}
+
+{% block conteudo %}
+  <h1>Países atendidos</h1>
+  <p><a href="{{ url_for('cadastrar_pais') }}">+ Cadastrar país</a></p>
+
+  {% if paises %}
+  <table border="1" cellpadding="4">
+    <thead>
+      <tr>
+        <th>Código</th><th>País</th><th>Região</th>
+        <th>Operadora</th><th>Tecnologia</th><th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in paises %}
+      <tr>
+        <td>{{ p.codigo }}</td>
+        <td>{{ p.pais }}</td>
+        <td>{{ p.regiao }}</td>
+        <td>{{ p.operadora }}</td>
+        <td>{{ p.tecnologia }}</td>
+        <td>
+          <a href="{{ url_for('editar_pais', codigo=p.codigo) }}">Editar</a>
+          <form action="{{ url_for('remover_pais', codigo=p.codigo) }}" method="post" style="display:inline"
+                onsubmit="return confirm('Remover {{ p.pais }}?');">
+            <button type="submit">Remover</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>Nenhum país cadastrado.</p>
+  {% endif %}
+
+  <h2>Instrumentação da Tabela Hash</h2>
+  <table border="1" cellpadding="4">
+    {% for nome, valor in metricas.items() %}
+    <tr><th>{{ nome }}</th><td>{{ valor }}</td></tr>
+    {% endfor %}
+  </table>
+{% endblock %}

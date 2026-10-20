@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}GlobalSIM{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <nav>
+    <a href="{{ url_for('index') }}">Início</a> |
+    <a href="{{ url_for('listar_paises') }}">Países</a> |
+    <a href="{{ url_for('cadastrar_pais') }}">Cadastrar país</a> |
+    <a href="{{ url_for('cobertura') }}">Consultar cobertura</a>
+  </nav>
+  <hr>
+
+  {# Mensagens flash: categoria "sucesso" ou "erro" #}
+  {% with mensagens = get_flashed_messages(with_categories=true) %}
+    {% for categoria, mensagem in mensagens %}
+      <p class="mensagem {{ categoria }}">{{ mensagem }}</p>
+    {% endfor %}
+  {% endwith %}
+
+  {% block conteudo %}{% endblock %}
+</body>
+</html>

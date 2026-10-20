@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titulo %}GlobalSIM - Início{% endblock %}
+
+{% block conteudo %}
+  <h1>GlobalSIM</h1>
+  <p>Serviço internacional de Internet por eSIM.</p>
+  <p>Países atendidos cadastrados: <strong>{{ total }}</strong></p>
+  <ul>
+    <li><a href="{{ url_for('listar_paises') }}">Ver países atendidos</a></li>
+    <li><a href="{{ url_for('cobertura') }}">Consultar cobertura por código</a></li>
+  </ul>
+{% endblock %}

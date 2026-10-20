@@ -1,16 +1,46 @@
 {% extends "base.html" %}
+
 {% block titulo %}GlobalSIM - Países{% endblock %}
 
 {% block conteudo %}
-  <h1>Países atendidos</h1>
-  <p><a href="{{ url_for('cadastrar_pais') }}">+ Cadastrar país</a></p>
+<div class="d-flex justify-content-between align-items-center py-3 border-bottom mb-4">
+  <h1 class="h3 mb-0">Países Cadastrados</h1>
+  <a href="{{ url_for('cadastrar_pais') }}" class="btn btn-success btn-sm">Cadastrar Novo País</a>
+</div>
 
-  {% if paises %}
-  <table border="1" cellpadding="4">
-    <thead>
+<h2 class="h5">Instrumentação da Tabela Hash</h2>
+{% set rotulos = {
+  'tamanho': 'Tamanho (N)',
+  'capacidade': 'Capacidade (M)',
+  'fator_carga': 'Fator de carga',
+  'colisoes': 'Colisões',
+  'maior_cadeia': 'Maior cadeia',
+  'buckets_usados': 'Buckets usados'
+} %}
+<div class="row g-2 mb-4">
+  {% for chave, valor in metricas.items() %}
+  <div class="col-6 col-md-4 col-lg-2">
+    <div class="card text-center h-100">
+      <div class="card-body py-2">
+        <div class="text-muted small">{{ rotulos.get(chave, chave) }}</div>
+        <div class="fs-5 fw-semibold">{{ valor }}</div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if paises %}
+<div class="table-responsive">
+  <table class="table table-bordered table-striped align-middle">
+    <thead class="table-light">
       <tr>
-        <th>Código</th><th>País</th><th>Região</th>
-        <th>Operadora</th><th>Tecnologia</th><th>Ações</th>
+        <th scope="col">Código</th>
+        <th scope="col">País</th>
+        <th scope="col">Região</th>
+        <th scope="col">Operadora</th>
+        <th scope="col">Tecnologia</th>
+        <th scope="col">Ações</th>
       </tr>
     </thead>
     <tbody>
@@ -22,24 +52,18 @@
         <td>{{ p.operadora }}</td>
         <td>{{ p.tecnologia }}</td>
         <td>
-          <a href="{{ url_for('editar_pais', codigo=p.codigo) }}">Editar</a>
-          <form action="{{ url_for('remover_pais', codigo=p.codigo) }}" method="post" style="display:inline"
-                onsubmit="return confirm('Remover {{ p.pais }}?');">
-            <button type="submit">Remover</button>
+          <a href="{{ url_for('editar_pais', codigo=p.codigo) }}" class="btn btn-outline-primary btn-sm">Editar</a>
+          <form action="{{ url_for('remover_pais', codigo=p.codigo) }}" method="post" class="d-inline"
+                onsubmit="return confirm('Remover {{ p.pais }} ({{ p.codigo }})?');">
+            <button type="submit" class="btn btn-outline-danger btn-sm">Remover</button>
           </form>
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
-  {% else %}
-    <p>Nenhum país cadastrado.</p>
-  {% endif %}
-
-  <h2>Instrumentação da Tabela Hash</h2>
-  <table border="1" cellpadding="4">
-    {% for nome, valor in metricas.items() %}
-    <tr><th>{{ nome }}</th><td>{{ valor }}</td></tr>
-    {% endfor %}
-  </table>
+</div>
+{% else %}
+<div class="alert alert-secondary">Nenhum país cadastrado.</div>
+{% endif %}
 {% endblock %}

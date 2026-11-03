@@ -131,6 +131,9 @@ Contadores: nº de splits, altura, nº de nós, nós visitados e comparações n
 - Rotas: `/clientes` (listagem paginada em ordem via percurso da árvore), `/clientes/novo`, `/clientes/<id>`, `/clientes/<id>/editar`, `/clientes/<id>/esim` (associar eSIM e pacote) — alterações via POST.
 - **Consulta integrada** `/consulta` (cliente + destino): busca na Árvore B, depois na Tabela Hash, exibindo os passos como no enunciado.
 
+### Diferencial
+- Simulação de falhas de conexões e recálculo automático das rotas.
+
 ---
 
 ## Etapa 3 — Grafo (prazo 01/12/2026)

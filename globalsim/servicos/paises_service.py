@@ -7,10 +7,8 @@ feita pela TabelaHash (estruturas/tabela_hash.py).
 
 Fluxo: JSON -> carrega na TabelaHash -> operações -> salva a TabelaHash no JSON.
 """
-import json
-import os
-
 from estruturas.tabela_hash import TabelaHash
+from servicos.persistencia import carregar_json, salvar_json
 
 CAMPOS = ("codigo", "pais", "regiao", "operadora", "tecnologia")
 
@@ -24,17 +22,12 @@ class PaisesService:
     # ---------- persistência ----------
     def carregar(self):
         """Lê o JSON e insere cada país na Tabela Hash."""
-        if not os.path.exists(self.caminho_json):
-            return
-        with open(self.caminho_json, "r", encoding="utf-8") as f:
-            registros = json.load(f)
-        for registro in registros:
+        for registro in carregar_json(self.caminho_json, padrao=[]):
             self.tabela.inserir(registro["codigo"], registro)
 
     def salvar(self):
         """Grava no JSON o conteúdo atual da Tabela Hash."""
-        with open(self.caminho_json, "w", encoding="utf-8") as f:
-            json.dump(self.listar(), f, ensure_ascii=False, indent=2)
+        salvar_json(self.caminho_json, self.listar())
 
     # ---------- validação ----------
     @staticmethod

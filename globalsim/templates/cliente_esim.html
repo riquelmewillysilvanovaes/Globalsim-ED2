@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}GlobalSIM - eSIM de {{ cliente.nome }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-8">
+    <h1 class="h3 py-3 border-bottom mb-4">Associar eSIM e Pacote</h1>
+    <p class="text-muted">
+      Cliente <strong>{{ cliente.nome }}</strong> (ID {{ cliente.id }}).
+      eSIM atual: <strong>{{ cliente.esim or 'nenhum' }}</strong>.
+    </p>
+
+    <form method="post" novalidate>
+      <div class="mb-3">
+        <label for="campo-esim" class="form-label">eSIM</label>
+        <input type="text" id="campo-esim" name="esim" class="form-control text-uppercase" required
+               placeholder="ESIM-83921" value="{{ esim }}">
+        <div class="form-text">Formato ESIM-NNNNN (5 dígitos).</div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label d-block">Pacote</label>
+        {% for p in pacotes %}
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="pacote" id="pacote-{{ p.codigo }}"
+                 value="{{ p.codigo }}" {{ 'checked' if pacote == p.codigo|string }} required>
+          <label class="form-check-label" for="pacote-{{ p.codigo }}">
+            <strong>{{ p.codigo }} · {{ p.nome }}</strong> — {{ p.dados_gb }} GB, {{ p.validade_dias }} dias,
+            cobertura {{ p.cobertura }}
+          </label>
+        </div>
+        {% endfor %}
+      </div>
+
+      <button type="submit" class="btn btn-primary">Associar</button>
+      <a href="{{ url_for('detalhar_cliente', cliente_id=cliente.id) }}" class="btn btn-outline-secondary">Cancelar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,7 @@
+[
+  {"codigo": 101, "nome": "Europa Basic", "dados_gb": 5, "validade_dias": 15, "cobertura": "Europa"},
+  {"codigo": 102, "nome": "Europa Plus", "dados_gb": 10, "validade_dias": 30, "cobertura": "Europa"},
+  {"codigo": 201, "nome": "América Basic", "dados_gb": 5, "validade_dias": 15, "cobertura": "América"},
+  {"codigo": 202, "nome": "América Plus", "dados_gb": 15, "validade_dias": 30, "cobertura": "América"},
+  {"codigo": 301, "nome": "Global", "dados_gb": 20, "validade_dias": 30, "cobertura": "Global"}
+]

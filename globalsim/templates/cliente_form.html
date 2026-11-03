@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}GlobalSIM - {{ 'Alterar' if editando else 'Cadastrar' }} Cliente{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-8">
+    <h1 class="h3 py-3 border-bottom mb-4">{{ 'Alterar Cliente' if editando else 'Cadastrar Novo Cliente' }}</h1>
+
+    <form method="post" novalidate>
+      <div class="mb-3">
+        <label for="campo-id" class="form-label">ID</label>
+        <input type="text" id="campo-id" name="id" inputmode="numeric"
+               class="form-control {{ 'bg-light' if editando }}" required placeholder="Ex: 58372"
+               value="{{ cliente.get('id', '') }}" {{ 'readonly' if editando }}>
+        <div class="form-text">
+          {% if editando %}
+            O ID é a chave do cliente na Árvore B e não pode ser alterado.
+          {% else %}
+            Número inteiro e único: é a chave de inserção na Árvore B.
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="campo-nome" class="form-label">Nome</label>
+        <input type="text" id="campo-nome" name="nome" class="form-control" required
+               value="{{ cliente.get('nome', '') }}">
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-8">
+          <label for="campo-email" class="form-label">E-mail</label>
+          <input type="email" id="campo-email" name="email" class="form-control" required
+                 value="{{ cliente.get('email', '') }}">
+        </div>
+        <div class="col-md-4">
+          <label for="campo-status" class="form-label">Status</label>
+          <select id="campo-status" name="status" class="form-select">
+            {% for s in status_validos %}
+              <option value="{{ s }}" {{ 'selected' if cliente.get('status', 'ativo') == s }}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      {% if not editando %}
+      <fieldset class="border rounded-4 p-3 mb-4">
+        <legend class="float-none w-auto px-2 fs-6 text-muted mb-0">eSIM e pacote (opcional)</legend>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="campo-esim" class="form-label">eSIM</label>
+            <input type="text" id="campo-esim" name="esim" class="form-control text-uppercase"
+                   placeholder="ESIM-83921" value="{{ cliente.get('esim') or '' }}">
+          </div>
+          <div class="col-md-6">
+            <label for="campo-pacote" class="form-label">Pacote</label>
+            <select id="campo-pacote" name="pacote" class="form-select">
+              <option value="">— sem pacote —</option>
+              {% for p in pacotes %}
+                <option value="{{ p.codigo }}" {{ 'selected' if (cliente.get('pacote') or '')|string == p.codigo|string }}>
+                  {{ p.codigo }} · {{ p.nome }} ({{ p.dados_gb }} GB / {{ p.validade_dias }} dias)
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </fieldset>
+      {% endif %}
+
+      <button type="submit" class="btn btn-primary">{{ 'Salvar alterações' if editando else 'Cadastrar' }}</button>
+      {% if editando %}
+        <a href="{{ url_for('detalhar_cliente', cliente_id=cliente.id) }}" class="btn btn-outline-secondary">Cancelar</a>
+      {% else %}
+        <a href="{{ url_for('listar_clientes') }}" class="btn btn-outline-secondary">Cancelar</a>
+      {% endif %}
+    </form>
+  </div>
+</div>
+{% endblock %}

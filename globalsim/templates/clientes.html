@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}GlobalSIM - Clientes{% endblock %}
+
+{% macro badge_status(status) -%}
+  {% set cores = {'ativo': 'success', 'inativo': 'secondary', 'suspenso': 'warning'} %}
+  <span class="badge bg-{{ cores.get(status, 'light') }}{{ ' text-dark' if status == 'suspenso' }}">{{ status }}</span>
+{%- endmacro %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center py-3 border-bottom mb-4 gap-2">
+  <div>
+    <h1 class="h3 mb-0">Clientes</h1>
+    <p class="text-muted mb-0">{{ total }} clientes, listados em ordem de ID pelo percurso em ordem da Árvore B.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('exibir_metricas') }}#arvore-b" class="btn btn-outline-primary btn-sm">
+      <i class="bi bi-diagram-3 me-1"></i>Ver Árvore B
+    </a>
+    <a href="{{ url_for('cadastrar_cliente') }}" class="btn btn-success btn-sm">
+      <i class="bi bi-person-plus me-1"></i>Cadastrar Cliente
+    </a>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-lg-6">
+    <form method="get" action="{{ url_for('buscar_cliente') }}">
+      <label for="busca-id" class="form-label">Buscar cliente por ID</label>
+      <div class="input-group">
+        <input type="text" id="busca-id" name="id" class="form-control" inputmode="numeric"
+               required autocomplete="off" placeholder="Ex: 58372">
+        <button class="btn btn-primary" type="submit"><i class="bi bi-search me-1"></i>Buscar</button>
+      </div>
+    </form>
+  </div>
+  <div class="col-lg-6 d-flex align-items-end">
+    <div class="small text-muted">
+      Árvore B com t = {{ metricas.grau_minimo }}: altura {{ metricas.altura }},
+      {{ metricas.total_nos }} nós, {{ metricas.splits }} splits,
+      ocupação média {{ metricas.ocupacao_media }}%.
+    </div>
+  </div>
+</div>
+
+{% if clientes %}
+<div class="table-responsive">
+  <table class="table table-bordered table-striped align-middle">
+    <thead class="table-light">
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Nome</th>
+        <th scope="col">E-mail</th>
+        <th scope="col">eSIM</th>
+        <th scope="col">Pacote</th>
+        <th scope="col">Status</th>
+        <th scope="col">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in clientes %}
+      {% set pacote = pacotes.buscar(c.pacote) if c.pacote is not none else none %}
+      <tr>
+        <td><a href="{{ url_for('detalhar_cliente', cliente_id=c.id) }}">{{ c.id }}</a></td>
+        <td>{{ c.nome }}</td>
+        <td>{{ c.email }}</td>
+        <td>{{ c.esim or '—' }}</td>
+        <td>{{ (pacote.codigo ~ ' · ' ~ pacote.nome) if pacote else '—' }}</td>
+        <td>{{ badge_status(c.status) }}</td>
+        <td class="text-nowrap">
+          <a href="{{ url_for('editar_cliente', cliente_id=c.id) }}" class="btn btn-outline-primary btn-sm">Editar</a>
+          <a href="{{ url_for('associar_esim', cliente_id=c.id) }}" class="btn btn-outline-secondary btn-sm">eSIM</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<nav aria-label="Paginação">
+  <ul class="pagination justify-content-center flex-wrap">
+    <li class="page-item {{ 'disabled' if pagina == 1 }}">
+      <a class="page-link" href="{{ url_for('listar_clientes', pagina=pagina - 1) }}">Anterior</a>
+    </li>
+    {% for p in range(1, total_paginas + 1) %}
+      {% if p == 1 or p == total_paginas or (p - pagina)|abs <= 2 %}
+        <li class="page-item {{ 'active' if p == pagina }}">
+          <a class="page-link" href="{{ url_for('listar_clientes', pagina=p) }}">{{ p }}</a>
+        </li>
+      {% elif (p - pagina)|abs == 3 %}
+        <li class="page-item disabled"><span class="page-link">…</span></li>
+      {% endif %}
+    {% endfor %}
+    <li class="page-item {{ 'disabled' if pagina == total_paginas }}">
+      <a class="page-link" href="{{ url_for('listar_clientes', pagina=pagina + 1) }}">Próxima</a>
+    </li>
+  </ul>
+</nav>
+{% else %}
+<div class="alert alert-secondary">
+  Nenhum cliente cadastrado. Gere a base com <code>python scripts/gerar_clientes.py</code>.
+</div>
+{% endif %}
+{% endblock %}

@@ -76,19 +76,52 @@
 
 </div>
 
+<div class="row g-4 mb-5">
+  <div class="col-md-6">
+    <div class="card h-100 p-3 border-0">
+      <div class="card-body">
+        <div class="d-inline-block bg-primary bg-opacity-10 p-3 rounded-circle mb-3">
+          <i class="bi bi-people fs-3" style="color: var(--primary-color);"></i>
+        </div>
+        <h5 class="card-title">Clientes e eSIMs</h5>
+        <p class="card-text text-muted">Cadastre, busque por ID e associe eSIMs e pacotes. Os clientes ficam indexados numa Árvore B.</p>
+        <a href="{{ url_for('listar_clientes') }}" class="btn btn-primary mt-2">Ver Clientes</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card h-100 p-3 border-0">
+      <div class="card-body">
+        <div class="d-inline-block bg-success bg-opacity-10 p-3 rounded-circle mb-3">
+          <i class="bi bi-diagram-3 fs-3 text-success"></i>
+        </div>
+        <h5 class="card-title">Consulta Integrada</h5>
+        <p class="card-text text-muted">Cliente × destino: busca o cliente na Árvore B, o país na Tabela Hash e confere o pacote.</p>
+        <a href="{{ url_for('consulta_integrada') }}" class="btn btn-success mt-2">Consultar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Resumo do Sistema -->
 <div class="card border-0 p-4">
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
     <div>
       <h5 class="fw-bold mb-1">Status da Base de Dados</h5>
-      <p class="text-muted mb-2">Total de registros carregados na Etapa 1.</p>
+      <p class="text-muted mb-2">Países na Tabela Hash e clientes na Árvore B.</p>
       <a href="{{ url_for('exibir_metricas') }}" class="btn btn-outline-primary btn-sm">
-        <i class="bi bi-speedometer2 me-1"></i>Ver Métricas da Tabela Hash
+        <i class="bi bi-speedometer2 me-1"></i>Ver Métricas das Estruturas
       </a>
     </div>
-    <div class="text-md-end">
-      <span class="display-6 fw-bold" style="color: var(--primary-color);">{{ total | default('0') }}</span>
-      <span class="text-muted d-block">países ativos</span>
+    <div class="d-flex gap-5 text-md-end">
+      <div>
+        <span class="display-6 fw-bold" style="color: var(--primary-color);">{{ total | default('0') }}</span>
+        <span class="text-muted d-block">países ativos</span>
+      </div>
+      <div>
+        <span class="display-6 fw-bold" style="color: var(--primary-color);">{{ total_clientes | default('0') }}</span>
+        <span class="text-muted d-block">clientes</span>
+      </div>
     </div>
   </div>
 </div>

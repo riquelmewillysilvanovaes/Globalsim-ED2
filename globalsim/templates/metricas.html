@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard de Métricas - GlobalSIM{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center py-3 border-bottom mb-4 gap-3">
+    <div>
+        <span class="badge rounded-pill bg-dark text-white mb-2 px-3 py-2 fw-semibold">Instrumentação</span>
+        <h1 class="h3 fw-bold mb-0">Métricas da Tabela Hash</h1>
+        <p class="text-muted mb-0">Acompanhe o desempenho e a saúde da estrutura de dados em tempo real.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('listar_paises') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-list-ul me-1"></i>Ver Países
+        </a>
+        <a href="{{ url_for('cobertura') }}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-search me-1"></i>Testar Busca
+        </a>
+    </div>
+</div>
+
+<!-- Destaques Principais -->
+<div class="row g-4 mb-4">
+    <!-- Fator de Carga com Barra de Progresso -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100 p-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="text-muted mb-0 text-uppercase fw-semibold">Fator de Carga</h6>
+                    <i class="bi bi-speedometer2 fs-4 text-primary"></i>
+                </div>
+                <h2 class="display-5 fw-bold mb-3">{{ metricas.fator_carga | default('0.0') }}</h2>
+                {% set fc = (metricas.fator_carga if metricas and metricas.fator_carga else 0) %}
+                {% set fc_pct = [((fc * 100) | round(1)), 100] | min %}
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-primary" role="progressbar"
+                         style="width: 0%;"
+                         aria-valuenow="{{ fc_pct }}"
+                         aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <small class="text-muted mt-2 d-block">Rehash automático ao atingir 0.75</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumo de Capacidade -->
+    <div class="col-lg-6">
+        <div class="row g-3 h-100">
+            <div class="col-6">
+                <div class="card border-0 shadow-sm h-100 bg-primary bg-opacity-10 text-primary">
+                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <div class="small text-uppercase fw-bold mb-2">Tamanho (N)</div>
+                        <div class="display-6 fw-bold">{{ metricas.tamanho | default('0') }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card border-0 shadow-sm h-100 bg-white">
+                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <div class="small text-muted text-uppercase fw-bold mb-2">Capacidade (M)</div>
+                        <div class="display-6 fw-bold">{{ metricas.capacidade | default('0') }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Grid de Métricas Secundárias -->
+<h4 class="h5 fw-bold mb-3 mt-5">Detalhes de Execução</h4>
+<div class="row g-3">
+
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small fw-semibold mb-1">Colisões Atuais</div>
+                <div class="fs-4 fw-bold">{{ metricas.colisoes | default('0') }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small fw-semibold mb-1">Colisões Acumuladas</div>
+                <div class="fs-4 fw-bold text-danger">{{ metricas.colisoes_acumuladas | default('0') }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small fw-semibold mb-1">Maior Bucket</div>
+                <div class="fs-4 fw-bold">{{ metricas.maior_bucket | default('0') }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small fw-semibold mb-1">Buckets Usados</div>
+                <div class="fs-4 fw-bold">{{ metricas.buckets_usados | default('0') }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small fw-semibold mb-1">Qtd. de Rehashes</div>
+                <div class="fs-4 fw-bold text-warning">{{ metricas.rehashes | default('0') }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small fw-semibold mb-1">Comparações (Última Busca)</div>
+                <div class="fs-4 fw-bold">{{ metricas.comparacoes_ultima_busca | default('0') }}</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.progress-bar[aria-valuenow]').forEach(function (bar) {
+            const val = bar.getAttribute('aria-valuenow');
+            if (val !== null) {
+                bar.style.width = val + '%';
+            }
+        });
+    });
+</script>
+{% endblock %}

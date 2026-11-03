@@ -1,34 +1,20 @@
 {% extends "base.html" %}
 
-{% block titulo %}GlobalSIM - Países{% endblock %}
+{% block title %}GlobalSIM - Países{% endblock %}
 
-{% block conteudo %}
-<div class="d-flex justify-content-between align-items-center py-3 border-bottom mb-4">
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center py-3 border-bottom mb-4 gap-2">
   <h1 class="h3 mb-0">Países Cadastrados</h1>
-  <a href="{{ url_for('cadastrar_pais') }}" class="btn btn-success btn-sm">Cadastrar Novo País</a>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('exibir_metricas') }}" class="btn btn-outline-primary btn-sm">
+      <i class="bi bi-speedometer2 me-1"></i>Ver Métricas
+    </a>
+    <a href="{{ url_for('cadastrar_pais') }}" class="btn btn-success btn-sm">
+      <i class="bi bi-plus-lg me-1"></i>Cadastrar Novo País
+    </a>
+  </div>
 </div>
 
-<h2 class="h5">Instrumentação da Tabela Hash</h2>
-{% set rotulos = {
-  'tamanho': 'Tamanho (N)',
-  'capacidade': 'Capacidade (M)',
-  'fator_carga': 'Fator de carga',
-  'colisoes': 'Colisões',
-  'maior_cadeia': 'Maior cadeia',
-  'buckets_usados': 'Buckets usados'
-} %}
-<div class="row g-2 mb-4">
-  {% for chave, valor in metricas.items() %}
-  <div class="col-6 col-md-4 col-lg-2">
-    <div class="card text-center h-100">
-      <div class="card-body py-2">
-        <div class="text-muted small">{{ rotulos.get(chave, chave) }}</div>
-        <div class="fs-5 fw-semibold">{{ valor }}</div>
-      </div>
-    </div>
-  </div>
-  {% endfor %}
-</div>
 
 {% if paises %}
 <div class="table-responsive">
@@ -54,7 +40,7 @@
         <td>
           <a href="{{ url_for('editar_pais', codigo=p.codigo) }}" class="btn btn-outline-primary btn-sm">Editar</a>
           <form action="{{ url_for('remover_pais', codigo=p.codigo) }}" method="post" class="d-inline"
-                onsubmit="return confirm('Remover {{ p.pais }} ({{ p.codigo }})?');">
+            onsubmit="return confirm('Remover {{ p.pais }} ({{ p.codigo }})?');">
             <button type="submit" class="btn btn-outline-danger btn-sm">Remover</button>
           </form>
         </td>

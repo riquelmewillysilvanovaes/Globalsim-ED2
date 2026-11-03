@@ -1,65 +1,66 @@
-<!doctype html>
-<html lang="pt-br">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block titulo %}{% block title %}GlobalSIM{% endblock %}{% endblock %}</title>
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}GlobalSIM{% endblock %}</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <!-- Navbar Clara e Moderna -->
+  <nav class="navbar navbar-expand-lg sticky-top">
     <div class="container">
-      <a class="navbar-brand" href="{{ url_for('index') }}">GlobalSIM</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navGlobalSIM" aria-controls="navGlobalSIM" aria-expanded="false" aria-label="Alternar navegação">
+      <a class="navbar-brand" href="{{ url_for('index') }}">
+        <i class="bi bi-globe-americas me-2" style="color: var(--primary-color);"></i>Global<span>SIM</span>
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navGlobalSIM">
-        <ul class="navbar-nav ms-auto">
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto gap-3 align-items-start align-items-lg-center">
           <li class="nav-item">
-            <a class="nav-link {{ 'active' if request.endpoint == 'index' }}" href="{{ url_for('index') }}">Início</a>
+            <a class="nav-link" href="{{ url_for('index') }}">Início</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {{ 'active' if request.endpoint in ['listar_paises', 'editar_pais'] }}" href="{{ url_for('listar_paises') }}">Países</a>
+            <a class="nav-link" href="{{ url_for('listar_paises') }}">Países</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {{ 'active' if request.endpoint == 'cadastrar_pais' }}" href="{{ url_for('cadastrar_pais') }}">Cadastrar</a>
+            <a class="nav-link" href="{{ url_for('cobertura') }}">Consultar Cobertura</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {{ 'active' if request.endpoint == 'cobertura' }}" href="{{ url_for('cobertura') }}">Consultar Cobertura</a>
+            <a class="nav-link" href="{{ url_for('exibir_metricas') }}">Métricas</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-outline-primary px-4 ms-lg-2 text-start text-lg-center" href="{{ url_for('cadastrar_pais') }}">
+              Cadastrar País
+            </a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <main class="container my-4">
+  <!-- Flash Messages -->
+  <div class="container mt-4">
+    {% include 'components/_alerts.html' %}
+  </div>
 
-    {% with mensagens = get_flashed_messages(with_categories=true) %}
-      {% for categoria, mensagem in mensagens %}
-        {% set alert_class = 'alert-success' if categoria == 'sucesso' else ('alert-danger' if categoria == 'erro' else 'alert-info') %}
-        <div class="alert {{ alert_class }} alert-dismissible fade show" role="alert">
-          {{ mensagem }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-        </div>
-      {% endfor %}
-    {% endwith %}
-
-    {% block conteudo %}
-      {% block content %}{% endblock %}
-    {% endblock %}
-
+  <!-- Main Content -->
+  <main class="container py-4">
+    {% block content %}{% endblock %}
   </main>
 
-  <footer class="border-top py-3 mt-auto text-center text-muted small">
-    GlobalSIM &bull; Estruturas de Dados II &bull; DCET 1 / UNEB
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-  {% block scripts %}{% endblock %}
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

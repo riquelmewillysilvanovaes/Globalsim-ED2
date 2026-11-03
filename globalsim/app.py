@@ -87,6 +87,10 @@ def criar_app(caminho_paises=None):
             "cobertura.html", codigo=codigo, pais=pais, consultou=consultou
         )
 
+    @app.route("/metricas")
+    def exibir_metricas():
+        return render_template("metricas.html", metricas=paises.metricas())
+
     return app
 
 

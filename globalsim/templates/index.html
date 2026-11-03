@@ -1,58 +1,95 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block titulo %}GlobalSIM - Painel de Operações{% endblock %}
+{% block title %}Início - GlobalSIM{% endblock %}
 
-{% block conteudo %}
-<div class="py-4 border-bottom mb-4">
-  <h1 class="h3 mb-1">GlobalSIM - Painel de Operações</h1>
-  <p class="text-muted mb-0">Gerenciamento de cobertura internacional e eSIMs</p>
-</div>
-
-<div class="row g-3 mb-4">
-  <div class="col-md-4">
-    <div class="card h-100">
-      <div class="card-body">
-        <h2 class="h6 card-title">Países Cadastrados</h2>
-        <p class="card-text text-muted small">Listar, alterar e remover países atendidos.</p>
-        <a href="{{ url_for('listar_paises') }}" class="btn btn-primary btn-sm">Ver Países Cadastrados</a>
-      </div>
+{% block content %}
+<!-- Hero Section -->
+<div class="row align-items-center mb-5 py-5">
+  <div class="col-lg-7">
+    <span class="badge rounded-pill bg-warning text-dark mb-3 px-3 py-2 fw-semibold">GlobalSIM v1.0</span>
+    <h1 class="display-4 fw-bold mb-4">
+      Gerenciamento de cobertura <span style="color: var(--primary-color);">internacional</span> e eSIMs.
+    </h1>
+    <p class="lead text-muted mb-4">
+      Tenha controle total sobre a base de países atendidos. Consulte coberturas, gerencie destinos e acompanhe as
+      métricas da estrutura de dados em tempo real.
+    </p>
+    <div class="d-flex gap-3">
+      <a href="{{ url_for('cadastrar_pais') }}" class="btn btn-success btn-lg">
+        <i class="bi bi-plus-circle me-2"></i>Novo Destino
+      </a>
+      <a href="{{ url_for('cobertura') }}" class="btn btn-outline-primary btn-lg">
+        <i class="bi bi-search me-2"></i>Consultar Código
+      </a>
     </div>
   </div>
-  <div class="col-md-4">
-    <div class="card h-100">
-      <div class="card-body">
-        <h2 class="h6 card-title">Novo País</h2>
-        <p class="card-text text-muted small">Incluir um novo país na base de cobertura.</p>
-        <a href="{{ url_for('cadastrar_pais') }}" class="btn btn-success btn-sm">Cadastrar Novo País</a>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="card h-100">
-      <div class="card-body">
-        <h2 class="h6 card-title">Cobertura</h2>
-        <p class="card-text text-muted small">Verificar o atendimento a partir do código do país.</p>
-        <a href="{{ url_for('cobertura') }}" class="btn btn-secondary btn-sm">Consultar Cobertura</a>
-      </div>
-    </div>
+  <div class="col-lg-5 d-none d-lg-block text-center">
+    <!-- Ícone decorativo para preencher o espaço (substituível por imagem) -->
+    <i class="bi bi-phone text-muted" style="font-size: 14rem; opacity: 0.1;"></i>
   </div>
 </div>
 
-<h2 class="h5">Resumo</h2>
-<table class="table table-bordered table-sm w-auto">
-  <tbody>
-    <tr>
-      <th scope="row" class="table-light">Países cadastrados</th>
-      <td>{{ total }}</td>
-    </tr>
-    <tr>
-      <th scope="row" class="table-light">Ações da Etapa 1</th>
-      <td>
-        <a href="{{ url_for('cadastrar_pais') }}">Cadastrar</a> |
-        <a href="{{ url_for('listar_paises') }}">Listar / Alterar / Remover</a> |
-        <a href="{{ url_for('cobertura') }}">Consultar</a>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<!-- Ações Rápidas em Cards -->
+<h3 class="fw-bold mb-4">Ações Rápidas</h3>
+<div class="row g-4 mb-5">
+
+  <div class="col-md-4">
+    <div class="card h-100 p-3 border-0">
+      <div class="card-body">
+        <div class="d-inline-block bg-primary bg-opacity-10 p-3 rounded-circle mb-3">
+          <i class="bi bi-list-ul fs-3" style="color: var(--primary-color);"></i>
+        </div>
+        <h5 class="card-title">Países Cadastrados</h5>
+        <p class="card-text text-muted">Acesse a listagem completa de destinos atendidos e realize a gestão cadastral.</p>
+        <a href="{{ url_for('listar_paises') }}" class="btn btn-primary mt-2">Ver Listagem</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card h-100 p-3 border-0">
+      <div class="card-body">
+        <div class="d-inline-block bg-success bg-opacity-10 p-3 rounded-circle mb-3">
+          <i class="bi bi-plus-lg fs-3 text-success"></i>
+        </div>
+        <h5 class="card-title">Expansão de Rede</h5>
+        <p class="card-text text-muted">Inclua novos países na base de cobertura do GlobalSIM preenchendo o formulário
+          de destino.</p>
+        <a href="{{ url_for('cadastrar_pais') }}" class="btn btn-success mt-2">Cadastrar País</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card h-100 p-3 border-0">
+      <div class="card-body">
+        <div class="d-inline-block bg-dark bg-opacity-10 p-3 rounded-circle mb-3">
+          <i class="bi bi-shield-check fs-3 text-dark"></i>
+        </div>
+        <h5 class="card-title">Análise de Cobertura</h5>
+        <p class="card-text text-muted">Verifique a disponibilidade e os detalhes de atendimento a partir do código ISO
+          do país (ex: BR).</p>
+        <a href="{{ url_for('cobertura') }}" class="btn btn-outline-primary mt-2">Verificar Cobertura</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Resumo do Sistema -->
+<div class="card border-0 p-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+    <div>
+      <h5 class="fw-bold mb-1">Status da Base de Dados</h5>
+      <p class="text-muted mb-2">Total de registros carregados na Etapa 1.</p>
+      <a href="{{ url_for('exibir_metricas') }}" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-speedometer2 me-1"></i>Ver Métricas da Tabela Hash
+      </a>
+    </div>
+    <div class="text-md-end">
+      <span class="display-6 fw-bold" style="color: var(--primary-color);">{{ total | default('0') }}</span>
+      <span class="text-muted d-block">países ativos</span>
+    </div>
+  </div>
+</div>
 {% endblock %}

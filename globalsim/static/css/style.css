@@ -1,57 +1,156 @@
-/* GlobalSIM - complementos mínimos ao Bootstrap 5 (sem sombras ou animações). */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Paleta de Cores baseada nas referências */
+  --bg-light: #F9F8F6;
+  /* Fundo creme/leve (Airalo) */
+  --text-dark: #1D1D1F;
+  --text-muted: #6E6E73;
+
+  /* Alto Contraste (Holafly / Saily) */
+  --primary-color: #FF3B5C;
+  /* Rosa/Vermelho vibrante para contraste principal */
+  --primary-hover: #E0244A;
+  --success-color: #00D166;
+  /* Verde vibrante para ações positivas */
+  --success-hover: #00B257;
+  --accent-color: #FFDE00;
+  /* Amarelo Saily para tags/destaques */
+
+  /* Superfícies e Sombras */
+  --card-bg: #FFFFFF;
+  --border-radius-lg: 24px;
+  --border-radius-md: 16px;
+  --border-radius-sm: 8px;
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
 
 body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 40px;
 }
 
-main {
-  flex: 1 0 auto;
+/* Navbar Moderna */
+.navbar {
+  background-color: var(--card-bg) !important;
+  box-shadow: var(--shadow-sm);
+  padding: 1rem 0;
 }
 
-/* Classes mantidas por compatibilidade com cobertura.html e pais_form.html,
-   neutralizadas para o visual padrão do Bootstrap. */
-.card-custom {
-  border: 1px solid #dee2e6;
-  border-radius: 0.375rem;
-  background: #fff;
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--text-dark) !important;
 }
 
-.metric-icon-box {
-  width: 40px;
-  height: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
+.navbar-brand span {
+  color: var(--primary-color);
 }
 
-.code-badge {
-  font-family: SFMono-Regular, Menlo, Consolas, monospace;
+.nav-link {
+  font-weight: 500;
+  color: var(--text-dark) !important;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--primary-color) !important;
+}
+
+/* Cards (Inspirado no Saily e Holafly) */
+.card {
+  background: var(--card-bg);
+  border: none;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.card-title {
   font-weight: 600;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  padding: 0.15rem 0.5rem;
-  border-radius: 0.25rem;
-  display: inline-block;
+  color: var(--text-dark);
 }
 
-.badge-tech {
+/* Botões Customizados */
+.btn {
   font-weight: 600;
-  padding: 0.35em 0.65em;
-  border-radius: 0.25rem;
-  font-size: 0.8rem;
-  color: #fff;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
+  border-radius: 50px;
+  /* Botões arredondados (Airalo/Holafly) */
+  padding: 12px 28px;
+  transition: all 0.3s ease;
+  border: none;
 }
 
-.badge-5g { background-color: #198754; }
-.badge-4g { background-color: #0d6efd; }
-.badge-3g { background-color: #6c757d; }
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
 
-.form-label-custom {
-  font-weight: 600;
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--primary-hover);
+  color: white;
+  transform: scale(1.02);
+}
+
+.btn-success {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.btn-success:hover,
+.btn-success:focus {
+  background-color: var(--success-hover);
+  color: white;
+  transform: scale(1.02);
+}
+
+.btn-outline-primary {
+  background-color: transparent !important;
+  border: 2px solid var(--primary-color) !important;
+  color: var(--primary-color) !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+  background-color: var(--primary-color) !important;
+  color: #ffffff !important;
+  border-color: var(--primary-color) !important;
+  transform: scale(1.02);
+}
+
+/* Menu colapsado (Mobile) */
+@media (max-width: 991.98px) {
+  .navbar-nav {
+    padding-top: 0.75rem;
+    padding-bottom: 0.5rem;
+  }
+  .navbar-nav .btn {
+    text-align: left !important;
+    display: inline-block;
+    align-self: flex-start;
+    padding: 8px 20px;
+  }
+}
+
+/* Títulos Globais */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  letter-spacing: -0.5px;
 }

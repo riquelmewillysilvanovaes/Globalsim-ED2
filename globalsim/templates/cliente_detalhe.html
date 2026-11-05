@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}GlobalSIM - Cliente {{ cliente.id }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center py-3 border-bottom mb-4 gap-2">
+  <h1 class="h3 mb-0">{{ cliente.nome }} <span class="text-muted fs-5">#{{ cliente.id }}</span></h1>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('editar_cliente', cliente_id=cliente.id) }}" class="btn btn-outline-primary btn-sm">Editar</a>
+    <a href="{{ url_for('associar_esim', cliente_id=cliente.id) }}" class="btn btn-outline-secondary btn-sm">Associar eSIM</a>
+    <a href="{{ url_for('consulta_integrada', cliente=cliente.id) }}" class="btn btn-success btn-sm">Consultar destino</a>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <table class="table table-bordered">
+      <tbody>
+        <tr><th scope="row" class="table-light w-25">ID</th><td>{{ cliente.id }}</td></tr>
+        <tr><th scope="row" class="table-light">Nome</th><td>{{ cliente.nome }}</td></tr>
+        <tr><th scope="row" class="table-light">E-mail</th><td>{{ cliente.email }}</td></tr>
+        <tr><th scope="row" class="table-light">Status</th><td>{{ cliente.status }}</td></tr>
+        <tr><th scope="row" class="table-light">eSIM</th><td>{{ cliente.esim or '—' }}</td></tr>
+        <tr>
+          <th scope="row" class="table-light">Pacote</th>
+          <td>
+            {% if pacote %}
+              {{ pacote.codigo }} · {{ pacote.nome }} — {{ pacote.dados_gb }} GB, {{ pacote.validade_dias }} dias
+              (cobertura {{ pacote.cobertura }})
+            {% else %}—{% endif %}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <a href="{{ url_for('listar_clientes') }}" class="btn btn-outline-secondary btn-sm">Voltar à listagem</a>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h2 class="h6 text-uppercase text-muted fw-semibold mb-3">
+          <i class="bi bi-diagram-3 me-1"></i>Árvore B — buscar({{ arvore.chave_ultima_busca }})
+        </h2>
+        <p class="mb-3">
+          <strong>{{ arvore.nos_visitados_ultima_busca }}</strong> nós visitados e
+          <strong>{{ arvore.comparacoes_ultima_busca }}</strong> comparações
+          numa árvore de altura {{ arvore.altura }} com {{ arvore.tamanho }} clientes.
+        </p>
+        <ol class="mb-0 small">
+          {% for passo in arvore.caminho_ultima_busca %}
+          <li class="mb-1">
+            {{ 'folha' if passo.folha else ('raiz' if loop.first else 'nó interno') }}:
+            [{% for chave in passo.chaves %}{% if loop.index0 == passo.indice_encontrado %}<strong class="text-success">{{ chave }}</strong>{% else %}{{ chave }}{% endif %}{{ ', ' if not loop.last }}{% endfor %}]
+          </li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

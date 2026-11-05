@@ -28,28 +28,42 @@ Globalsim-ED2/
 ├── .venv/                         # Ambiente virtual Python isolado
 ├── globalsim/
 │   ├── app.py                     # Inicialização da aplicação Flask e rotas HTTP
+│   ├── config.py                  # Caminhos dos JSON, grau da Árvore B, paginação
 │   ├── requirements.txt           # Dependências do projeto (Flask, pytest)
 │   ├── pytest.ini                 # Configuração dos testes
 │   ├── INTERFACE_TABELA_HASH.md   # Especificação técnica da Tabela Hash
 │   ├── arquivos/
-│   │   └── paises.json            # Persistência dos registros de países
+│   │   ├── paises.json            # Países atendidos (Tabela Hash)
+│   │   ├── clientes.json          # 1.000 clientes gerados (Árvore B)
+│   │   └── pacotes.json           # Pacotes de serviço (lista)
 │   ├── estruturas/
-│   │   ├── __init__.py
-│   │   └── tabela_hash.py         # Implementação própria da Tabela Hash
+│   │   ├── tabela_hash.py         # Tabela Hash (Etapa 1)
+│   │   └── arvore_b.py            # Árvore B: ArvoreB e NoB (Etapa 2)
 │   ├── servicos/
-│   │   ├── __init__.py
-│   │   └── paises_service.py      # Camada de serviços e regras de negócio
-│   ├── static/
-│   │   └── css/
-│   │       └── style.css          # Estilos complementares da interface
+│   │   ├── persistencia.py        # Leitura/gravação dos JSON (escrita atômica)
+│   │   ├── paises_service.py      # Regras de negócio dos países
+│   │   ├── clientes_service.py    # Regras de negócio dos clientes e eSIMs
+│   │   ├── pacotes_service.py     # Pacotes e cobertura por região
+│   │   └── consulta.py            # Consulta integrada cliente × destino
+│   ├── scripts/
+│   │   └── gerar_clientes.py      # Gera arquivos/clientes.json (seed fixa)
+│   ├── static/css/style.css       # Estilos complementares da interface
 │   ├── templates/
 │   │   ├── base.html              # Template mestre com Bootstrap 5 e Navbar
-│   │   ├── index.html             # Página inicial / Apresentação do serviço
-│   │   ├── paises.html            # Listagem de países e painel de métricas
-│   │   ├── pais_form.html         # Formulário unificado (cadastro e edição)
-│   │   └── cobertura.html         # Consulta de disponibilidade de rede
+│   │   ├── index.html             # Página inicial
+│   │   ├── paises.html            # Listagem de países
+│   │   ├── pais_form.html         # Cadastro e edição de país
+│   │   ├── cobertura.html         # Consulta de cobertura
+│   │   ├── clientes.html          # Listagem paginada + busca por ID
+│   │   ├── cliente_form.html      # Cadastro e edição de cliente
+│   │   ├── cliente_detalhe.html   # Cliente + caminho da busca na Árvore B
+│   │   ├── cliente_esim.html      # Associação de eSIM e pacote
+│   │   ├── consulta.html          # Consulta integrada cliente × destino
+│   │   └── metricas.html          # Instrumentação da Hash e da Árvore B
 │   └── tests/
-│       └── test_tabela_hash.py    # Testes automatizados da Tabela Hash
+│       ├── test_tabela_hash.py    # Testes da Tabela Hash
+│       ├── test_arvore_b.py       # Testes da Árvore B e do serviço de clientes
+│       └── test_app.py            # Testes das rotas e da consulta integrada
 ├── .gitignore
 └── README.md
 ```
@@ -106,6 +120,13 @@ Dentro da pasta `globalsim/`:
 pytest -q
 ```
 
+### 7. (Re)gerar a base de clientes
+O repositório já traz `arquivos/clientes.json` com 1.000 clientes. Para recriá-lo (mesma seed, mesmo resultado):
+```bash
+cd globalsim
+python scripts/gerar_clientes.py          # ou: python scripts/gerar_clientes.py 5000
+```
+
 ---
 
 ## 🔑 Etapa 1 — Tabela Hash (`globalsim/estruturas/tabela_hash.py`)
@@ -118,6 +139,51 @@ Os países atendidos ficam numa Tabela Hash implementada do zero (sem `dict`), i
 * **Operações:** `inserir` (rejeita código duplicado), `buscar`, `atualizar`, `remover`, `listar`/`itens`.
 * **Instrumentação** (`metricas()` / `estatisticas()`): capacidade, nº de elementos, fator de carga, colisões atuais e acumuladas, maior bucket, buckets usados, nº de rehashes, comparações da última busca e o mapa dos buckets (índice → chaves).
 * **Persistência:** `arquivos/paises.json` é carregado na tabela ao iniciar e regravado após cada cadastro, alteração ou remoção (`servicos/paises_service.py`).
+
+---
+
+## 🌳 Etapa 2 — Árvore B (`globalsim/estruturas/arvore_b.py`)
+
+Os clientes ficam numa Árvore B implementada do zero, indexada pelo ID do cliente. Toda busca, listagem e alteração de cliente passa pela árvore; o JSON só é lido na carga e regravado depois de cada alteração.
+
+* **Modelo:** implementação clássica (Cormen) com grau mínimo `t` configurável em `config.py` (padrão `t = 3`): cada nó guarda de `t−1 = 2` a `2t−1 = 5` chaves (a raiz pode ter menos), e um nó interno com `k` chaves tem `k+1` filhos. Cada chave anda junto com o registro do cliente (`no.chaves[i]` ↔ `no.valores[i]`).
+* **Busca:** desce da raiz; em cada nó compara as chaves da esquerda para a direita até achar o ID ou a primeira chave maior, e desce pelo filho correspondente. Custo: no máximo `altura` nós visitados.
+* **Inserção com split proativo:** na descida, todo filho cheio (5 chaves) é dividido **antes** de entrarmos nele — a chave do meio sobe para o pai, as 2 menores ficam no nó original e as 2 maiores vão para um nó novo. Assim a folha sempre tem espaço e nunca é preciso voltar subindo. Quando a raiz está cheia, cria-se uma raiz nova acima dela: é o único momento em que a árvore cresce, e ela cresce pelo topo, por isso todas as folhas ficam sempre no mesmo nível.
+* **Operações:** `inserir` (rejeita ID duplicado), `buscar`, `atualizar`, `percorrer_em_ordem` (listagem ordenada por ID), `altura`. Remoção não é exigida pelo enunciado e não foi implementada.
+* **Instrumentação** (`metricas()` / `estatisticas()`, página **Métricas**): nº de clientes, altura, total de nós, nº de splits, ocupação média dos nós, nós visitados e comparações da última busca, nós por nível, chaves dos 3 primeiros níveis e o caminho percorrido pela última busca (também mostrado na página de cada cliente).
+* **Base de dados:** `scripts/gerar_clientes.py` gera 1.000 clientes com `random.seed(42)`, IDs únicos aleatórios de 5 dígitos, eSIM `ESIM-NNNNN`, pacote em {101, 102, 201, 202, 301} e status ativo/inativo/suspenso.
+* **Ordem de carga (decisão de implementação):** o `clientes.json` é gravado em ordem de ID (percurso em ordem), mas inserir chaves já ordenadas é o pior caso da Árvore B com split proativo — cada split deixa o nó da esquerda com `t−1` chaves e ele nunca mais recebe nenhuma. Medimos com os 1.000 clientes:
+
+  | Ordem de inserção | Altura | Nós | Splits | Ocupação média |
+  |---|---|---|---|---|
+  | Aleatória | 5 | 318 | 313 | 62,9% |
+  | Ordenada por ID | 6 | 497 | 491 | 40,2% |
+
+  Por isso `ClientesService.carregar()` embaralha a ordem de inserção com seed fixa: a árvore fica compacta e é igual em toda execução.
+
+### Pacotes
+`arquivos/pacotes.json` guarda os 5 pacotes do enunciado numa lista (o enunciado permite; não são uma estrutura avaliada). A equipe acrescentou o campo `cobertura` (`Europa`, `América` ou `Global`), usado para verificar se o pacote do cliente cobre a região do destino.
+
+### Consulta integrada (`/consulta`)
+Recebe o ID do cliente e o código do destino e executa, nesta ordem (`servicos/consulta.py`):
+1. **Árvore B** — `buscar(id)`: nome, eSIM, pacote e status, com nós visitados e comparações.
+2. **Tabela Hash** — `buscar("IT")`: país, cobertura e tecnologia, com comparações no bucket.
+3. **Pacote** — dados, validade e se cobre a região do destino.
+
+Trata cliente inexistente, destino não atendido, cliente inativo/suspenso, cliente sem eSIM/pacote e pacote que não cobre o destino. Na Etapa 3 a consulta ganha o Grafo e a rota de menor latência (Dijkstra).
+
+### Rotas da Etapa 2
+| Método | Rota | Função |
+|---|---|---|
+| GET | `/clientes?pagina=N` | Listagem paginada em ordem de ID + busca por ID |
+| GET/POST | `/clientes/novo` | Cadastro (eSIM e pacote opcionais) |
+| GET | `/clientes/<id>` | Consulta por ID, com o caminho da busca na árvore |
+| GET/POST | `/clientes/<id>/editar` | Alteração de nome, e-mail e status |
+| GET/POST | `/clientes/<id>/esim` | Associação de eSIM e pacote |
+| GET | `/consulta?cliente=ID&destino=XX` | Consulta integrada cliente × destino |
+| GET | `/metricas` | Instrumentação da Tabela Hash e da Árvore B |
+
+Todas as alterações usam POST e seguem Post/Redirect/Get, com mensagens via `flash`.
 
 ---
 

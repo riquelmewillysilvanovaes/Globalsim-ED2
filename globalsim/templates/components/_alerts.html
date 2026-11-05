@@ -1,7 +1,9 @@
+{# as rotas usam "sucesso"/"erro"; aqui viram as classes do Bootstrap #}
+{% set classes = {'sucesso': 'success', 'erro': 'danger', 'aviso': 'warning'} %}
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 {% for category, message in messages %}
-<div class="alert alert-{{ category }} alert-dismissible fade show border-0 shadow-sm rounded-4" role="alert">
+<div class="alert alert-{{ classes.get(category, category) }} alert-dismissible fade show border-0 shadow-sm rounded-4" role="alert">
   {{ message }}
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>

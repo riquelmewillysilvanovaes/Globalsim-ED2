@@ -30,15 +30,8 @@ Além dos requisitos comuns, cada equipe deverá propor e implementar pelo menos
 
 Mudanças exclusivamente estéticas, alteração de cores, logotipo, tema visual ou reorganização de telas **não** serão consideradas diferencial.
 
-Exemplos de diferenciais possíveis:
-
-- Comparação de diferentes graus da Árvore B e seus efeitos sobre altura, divisões e buscas.
-- Planejamento de viagem com múltiplos destinos.
+O nosso diferencial:
 - Simulação de falhas de conexões e recálculo automático das rotas.
-- Roteamento por diferentes critérios, como latência, custo ou outro peso definido pela equipe.
-- Identificação de países estratégicos da rede por métricas de conectividade.
-- Recomendação de pacote de dados a partir do roteiro de viagem.
-- Outro diferencial proposto pela equipe e aprovado pelo professor.
 
 Na apresentação final, a equipe deverá explicar o problema resolvido pelo diferencial, o algoritmo ou estrutura utilizado, as decisões de implementação e sua integração ao restante do sistema.
 
